@@ -25,8 +25,44 @@ rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
-  -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+  { 'NMAC427/guess-indent.nvim', lazy = false, opts = {} }, -- Detect tabstop and shiftwidth automatically
+
+  -- TODO: do we want this still
+  { 'wesQ3/vim-windowswap', lazy = false, config = function() end },
+
+  {
+    'christoomey/vim-tmux-navigator',
+    lazy = false,
+    cmd = {
+      'TmuxNavigateLeft',
+      'TmuxNavigateDown',
+      'TmuxNavigateUp',
+      'TmuxNavigateRight',
+      'TmuxNavigatePrevious',
+      'TmuxNavigatorProcessList',
+    },
+    keys = {
+      { '<c-h>', '<cmd><C-U>TmuxNavigateLeft<cr>' },
+      { '<c-j>', '<cmd><C-U>TmuxNavigateDown<cr>' },
+      { '<c-k>', '<cmd><C-U>TmuxNavigateUp<cr>' },
+      { '<c-l>', '<cmd><C-U>TmuxNavigateRight<cr>' },
+      { '<c-\\>', '<cmd><C-U>TmuxNavigatePrevious<cr>' },
+    },
+  },
+
+  -- TODO: consider upgrading this to 'kylechui/nvim-surround' or 'mini.surround' or 'vim-sandwich'
+  { 'tpope/vim-surround', lazy = false, config = function() end },
+  { 'PeterRincker/vim-argumentative', lazy = false, config = function() end },
+  { 'tpope/vim-repeat', lazy = false, config = function() end },
+  {
+    'junegunn/vim-easy-align',
+    lazy = false,
+    keys = {
+      { 'ga', '<Plug>(EasyAlign)', mode = { 'n', 'x' } },
+      { 'gi', '<Plug>(LiveEasyAlign)', mode = { 'n', 'x' } },
+    },
+    config = function() end,
+  },
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -689,14 +725,13 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
+      -- require('mini.ai').setup { n_lines = 500 }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -712,6 +747,7 @@ require('lazy').setup({
       statusline.section_location = function()
         return '%2l:%-2v'
       end
+      -- require('mini.surround').setup()
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
