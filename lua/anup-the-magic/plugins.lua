@@ -26,6 +26,19 @@ rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   { 'NMAC427/guess-indent.nvim', lazy = false, opts = {} }, -- Detect tabstop and shiftwidth automatically
+  {
+    'OXY2DEV/markview.nvim',
+    lazy = false,
+    opts = {
+      preview = {
+        modes = { 'i', 'n', 'no', 'c' },
+        hybrid_modes = { 'i', 'n' },
+
+        linewise_hybrid_mode = true,
+      },
+    },
+    dependencies = { 'saghen/blink.cmp' },
+  },
 
   -- TODO: do we want this still
   { 'wesQ3/vim-windowswap', lazy = false, config = function() end },
@@ -771,6 +784,21 @@ require('lazy').setup({
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
+    config = function(_, opts)
+      local ts_configs = require 'nvim-treesitter.configs'
+      ts_configs.setup(opts)
+
+      local autocmds = require 'anup-the-magic.autocommands'
+
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = { 'markdown' },
+        group = autocmds.groups.markdown,
+        callback = function()
+          vim.o.foldmethod = 'expr'
+          vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+        end,
+      })
+    end,
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
     --

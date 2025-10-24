@@ -3,6 +3,7 @@
 
 local groups = {
   help = vim.api.nvim_create_augroup('anup-the-magic/help', { clear = true }),
+  markdown = vim.api.nvim_create_augroup('anup-the-magic/markdown', { clear = true }),
   lua = vim.api.nvim_create_augroup('anup-the-magic/lua', { clear = true }),
   highlight_yank = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
 }
@@ -25,3 +26,15 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.cmd 'wincmd L'
   end,
 })
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'markdown' },
+  group = groups.markdown,
+  callback = function()
+    vim.o.wrap = false
+  end,
+})
+
+return {
+  groups = groups,
+}
