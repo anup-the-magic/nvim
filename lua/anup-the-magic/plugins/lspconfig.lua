@@ -310,6 +310,10 @@ return {
       })
     end
 
+    vim.lsp.enable 'vtsls'
+    vim.lsp.config('vtsls', {
+      filetypes = {},
+    })
     vim.lsp.enable 'ts_ls'
     vim.lsp.config('ts_ls', {
       cmd = { 'npx', 'typescript-language-server', '--stdio' },
