@@ -16,7 +16,11 @@ return { -- Fuzzy Finder (files, lsp, etc)
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
   },
   opts = function()
+    local actions = require 'telescope.actions'
+    local themes = require 'telescope.themes'
+
     return {
+      initial_mode = 'normal',
       -- You can put your default mappings / updates / etc. in here
       --  All the info you're looking for is in `:help telescope.setup()`
       --
@@ -27,13 +31,11 @@ return { -- Fuzzy Finder (files, lsp, etc)
       -- },
       -- pickers = {}
       mappings = {
-        i = { ['Esc'] = require('telescope.actions').close },
-        n = { ['Esc'] = require('telescope.actions').close },
+        i = { ['Esc'] = actions.close },
+        n = { ['Esc'] = actions.close },
       },
       extensions = {
-        ['ui-select'] = {
-          require('telescope.themes').get_dropdown(),
-        },
+        ['ui-select'] = { themes.get_dropdown() },
       },
       defaults = {
         file_ignore_patterns = { '%.meta' },
