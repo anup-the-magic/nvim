@@ -28,15 +28,52 @@ require('lazy').setup({
   {
     'OXY2DEV/markview.nvim',
     lazy = false,
+    dependencies = { 'saghen/blink.cmp' },
     opts = {
       preview = {
         modes = { 'i', 'n', 'no', 'c' },
         hybrid_modes = { 'i', 'n' },
 
-        linewise_hybrid_mode = true,
+        -- NOTE `true` _works_, but I haven't decided if I like it
+        linewise_hybrid_mode = false,
       },
+      -- list_items = {
+      --   shift_width = function(buffer, item)
+      --     --- Reduces the `indent` by 1 level.
+      --     ---
+      --     ---         indent                      1
+      --     --- ------------------------- = 1 ÷ --------- = new_indent
+      --     --- indent * (1 / new_indent)       new_indent
+      --     ---
+      --     local parent_indent = math.max(1, item.indent - vim.bo[buffer].shiftwidth)
+      --
+      --     return item.indent * (1 / (parent_indent * 2))
+      --   end,
+      --   marker_minus = {
+      --     add_padding = function(_, item)
+      --       return item.indent > 1
+      --     end,
+      --   },
+      -- },
     },
-    dependencies = { 'saghen/blink.cmp' },
+    -- config = function(opts)
+    --   local markview = require 'markview'
+    --   markview.setup(opts)
+    --
+    --   local groups = require('anup-the-magic.autocommands').groups
+    --   vim.api.nvim_create_autocmd('FileType', {
+    --     pattern = { 'markdown' },
+    --     group = groups.markdown,
+    --     callback = function()
+    --       vim.keymap.set(
+    --         'n',
+    --         'E',
+    --         '<CMD>Markview hybridToggle<CR>',
+    --         { desc = 'Toggle Hybrid mode for quick visualization of underlying Markdown' }
+    --       )
+    --     end,
+    --   })
+    -- end,
   },
 
   -- TODO: do we want this still
