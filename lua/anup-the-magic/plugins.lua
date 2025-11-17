@@ -45,6 +45,7 @@ require('lazy').setup({
 
   require_safe 'anup-the-magic.plugins.telescope',
   require_safe 'anup-the-magic.plugins.conform',
+  require_safe 'anup-the-magic.plugins.lspconfig',
 
   {
     'christoomey/vim-tmux-navigator',
