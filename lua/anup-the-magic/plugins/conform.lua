@@ -42,20 +42,23 @@ return {
     },
   },
   opts = {
-    notify_on_error = false,
+    notify_on_error = true,
+    default_format_opts = {
+      lsp_format = 'fallback',
+    },
     format_on_save = function(bufnr)
-      -- Disable "format_on_save lsp_fallback" for languages that don't
-      -- have a well standardized coding style. You can add additional
-      -- languages here or re-enable it for the disabled ones.
-      local disable_filetypes = { c = true, cpp = true }
-      if disable_filetypes[vim.bo[bufnr].filetype] then
-        return nil
-      else
-        return {
-          timeout_ms = 500,
-          lsp_format = 'fallback',
-        }
-      end
+      if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then return end
+
+      local should_lsp_fallback = {
+        c = false,
+        cpp = false,
+        cs = false,
+      }
+
+      return {
+        timeout_ms = 500,
+        lsp_fallback = not should_lsp_fallback[vim.bo[bufnr].filetype],
+      }
     end,
     formatters_by_ft = {
       lua = { 'stylua' },
@@ -66,4 +69,35 @@ return {
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
     },
   },
+  config = function(_, opts)
+    require('conform').setup(opts)
+
+    local conform_group = vim.api.nvim_create_augroup('anup-the-magic/conform', { clear = true })
+    vim.g.disable_autoformat = false
+    vim.api.nvim_create_autocmd('FileType', {
+      group = conform_group,
+      pattern = 'cs',
+      callback = function(au_opts)
+        print('Disabling autoformat for buffer ' .. au_opts.buf)
+        vim.b[au_opts.buf].disable_autoformat = true
+      end,
+    })
+
+    vim.api.nvim_create_user_command('FormatDisable', function(args)
+      -- :FormatDisable disables autoformat for this buffer only
+      -- :FormatDisable! disables autoformat globally
+      local disable = args.bang and vim.g or vim.b
+      disable.diable_autoformat = true
+    end, {
+      desc = 'Disable autoformat-on-save',
+      bang = true, -- allows the ! variant
+    })
+
+    vim.api.nvim_create_user_command('FormatEnable', function()
+      vim.b.disable_autoformat = false
+      vim.g.disable_autoformat = false
+    end, {
+      desc = 'Re-enable autoformat-on-save',
+    })
+  end,
 }
