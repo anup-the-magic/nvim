@@ -43,6 +43,8 @@ require('lazy').setup({
   -- TODO: do we want this still
   { 'wesQ3/vim-windowswap', lazy = false, config = function() end },
 
+  require 'anup-the-magic.plugins.telescope',
+
   {
     'christoomey/vim-tmux-navigator',
     lazy = false,
