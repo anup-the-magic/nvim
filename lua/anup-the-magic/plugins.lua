@@ -135,6 +135,8 @@ require('lazy').setup({
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
+      preset = 'helix',
+      sort = { 'group', 'alphanum', 'mod' },
       -- delay between pressing a key and opening which-key (milliseconds)
       -- this setting is independent of vim.o.timeoutlen
       delay = 0,
@@ -177,9 +179,10 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>t', group = '[T]oggle' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>s', group = 'Search' },
+        { '<leader>t', group = 'Toggle' },
+        { '<leader>h', group = 'Git Hunk', mode = { 'n', 'v' } },
+        { '<leader>gl', group = 'Language server' },
       },
     },
   },
