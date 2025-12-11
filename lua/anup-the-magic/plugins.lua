@@ -68,6 +68,8 @@ require('lazy').setup({
 
   -- TODO: consider upgrading this to 'kylechui/nvim-surround' or 'mini.surround' or 'vim-sandwich'
   { 'tpope/vim-surround', lazy = false, config = function() end },
+  -- Subvert, among others
+  { 'tpope/vim-abolish', lazy = false, config = function() end },
   { 'PeterRincker/vim-argumentative', lazy = false, config = function() end },
   { 'tpope/vim-repeat', lazy = false, config = function() end },
   {
