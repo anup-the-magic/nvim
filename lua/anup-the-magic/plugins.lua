@@ -42,6 +42,7 @@ require('lazy').setup({
   -- TODO: do we want this still
   { 'wesQ3/vim-windowswap', lazy = false, config = function() end },
 
+  -- TODO: the rest
   require_safe 'anup-the-magic.plugins.telescope',
   require_safe 'anup-the-magic.plugins.conform',
   require_safe 'anup-the-magic.plugins.mini_files',
@@ -208,6 +209,16 @@ require('lazy').setup({
       },
     },
   },
+
+  -- {
+  --   'nvimtools/none-ls.nvim',
+  --   dependencies = { 'neovim/nvim-lspconfig', require_safe 'anup-the-magic.plugins.mason' },
+  --   opts = function(_, opts)
+  --     local nls = require 'null-ls'
+  --     opts.sources = opts.sources or {}
+  --     table.insert(opts.sources, nls.builtins.formatting.black)
+  --   end,
+  -- },
 
   { -- Autocompletion
     'saghen/blink.cmp',
