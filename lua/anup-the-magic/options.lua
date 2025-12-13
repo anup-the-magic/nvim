@@ -44,6 +44,9 @@ end)
 
 -- Enable break indent
 vim.o.breakindent = true
+vim.opt.breakindentopt = { 'shift:5', 'sbr' }
+vim.o.showbreak = '+++ '
+vim.o.linebreak = true
 
 -- Save undo history
 vim.o.undofile = true
