@@ -99,6 +99,7 @@ vim.o.inccommand = 'split'
 
 -- Show which line your cursor is on
 vim.o.cursorline = true
+vim.opt.colorcolumn:append { 110 }
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
