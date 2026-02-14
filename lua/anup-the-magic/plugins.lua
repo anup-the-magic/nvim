@@ -120,6 +120,7 @@ require('lazy').setup({
   -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
+    lazy = false,
     opts = {
       signs = {
         add = { text = '+' },
@@ -128,6 +129,31 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+    },
+    keys = Utils.process_keybinds {
+      -- stylua: ignore start
+      ['[h'] = {
+        function() require('gitsigns').nav_hunk 'prev' end,
+        'Navigate to previous hunk',
+      },
+      [']h'] = {
+        function() require('gitsigns').nav_hunk 'next' end,
+        'Navigate to next hunk',
+      },
+      -- Doing this for now
+      ['[['] = {
+        function() require('gitsigns').nav_hunk 'prev' end,
+        'Navigate to next hunk',
+      },
+      [']]'] = {
+        function() require('gitsigns').nav_hunk 'next' end,
+        'Navigate to previous hunk',
+      },
+      ['?h'] = {
+        function() require('gitsigns').preview_hunk_inline() end,
+        'Preview hunk inline',
+      },
+      -- stylua: ignore end
     },
   },
 
