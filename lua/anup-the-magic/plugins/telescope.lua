@@ -64,6 +64,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = 'Search Resume' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
     vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = 'Search existing Buffers' })
+    vim.keymap.set('n', '<C-b>', builtin.buffers, { desc = 'Search existing Buffers' })
     vim.keymap.set({ 'n', 'v' }, '<leader>sw', builtin.grep_string, { desc = 'Search current Word' })
 
     -- Slightly advanced example of overriding default behavior and theme
