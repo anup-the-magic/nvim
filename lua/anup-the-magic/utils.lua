@@ -28,7 +28,7 @@ else
   })
 end
 
----@alias Command fun():nil
+---@alias Command fun():nil | string
 
 ---@class Keybinds
 ---@field [string] ( Command | [ Command, string ] )
