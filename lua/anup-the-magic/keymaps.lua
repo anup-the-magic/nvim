@@ -52,3 +52,16 @@ vim.keymap.set('n', '<leader>z', '<cmd>tabnew %<CR>', { desc = '[Z]oom in on thi
 -- Tab manipulation
 vim.keymap.set('n', '[t', '<cmd>tabprev<CR>', { desc = 'Go to prev tab' })
 vim.keymap.set('n', ']t', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
+
+vim.keymap.set(
+  'n',
+  '!!',
+  '<cmd>argadd `git diff --name-only -M --relative master`<CR>',
+  { desc = 'Open all modified files in background' }
+)
+vim.keymap.set(
+  'n',
+  '!l',
+  '<cmd>argadd `git diff --name-only -M --relative`<CR>',
+  { desc = 'Open all currently modified files in background' }
+)
