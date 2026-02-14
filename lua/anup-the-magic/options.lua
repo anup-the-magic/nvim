@@ -110,5 +110,5 @@ vim.o.scrolloff = 10
 vim.o.confirm = true
 
 -- [[ Folding ]]
-vim.o.foldlevel = 10
+vim.o.foldlevelstart = 10
 vim.o.foldcolumn = 'auto:9'
