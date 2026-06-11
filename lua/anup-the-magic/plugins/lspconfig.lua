@@ -103,7 +103,7 @@ return {
         'SmiteshP/nvim-navic',
         'MunifTanjim/nui.nvim',
       },
-      lazy = true,
+      lazy = false,
       cmd = { 'Navbuddy' },
       keys = { 'gO', '<cmd>Navbuddy<CR>' },
       opts = { lsp = { auto_attach = true } },
@@ -112,11 +112,11 @@ return {
       'stevearc/aerial.nvim',
       lazy = false, -- Can probably go through commands and list all, here
       keys = { -- Example mapping to toggle outline
-        { '<leader>o', '<cmd>AerialOpen<CR>', desc = 'Open outline' },
+        { '<leader>o', '<cmd>AerialOpen<CR>', desc = 'Open outline [Aerial]' },
       },
       opts = {},
       -- Optional dependencies
-      dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+      dependencies = { 'nvim-tree/nvim-web-devicons' },
     },
     {
       'seblyng/roslyn.nvim',
@@ -274,6 +274,6 @@ return {
     })
 
     vim.lsp.enable 'clangd'
-    vim.lsp.config('clangd', { cmd = { 'clangd-20' } })
+    vim.lsp.config('clangd', { cmd = { 'clangd', '--background-index', '--clang-tidy', '--log=verbose' } })
   end,
 }

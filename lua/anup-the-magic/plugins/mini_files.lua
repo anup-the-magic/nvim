@@ -1,8 +1,4 @@
 local utils = require 'anup-the-magic.utils'
-local foo = {
-  unpack(utils.process_keybinds({ ['g!'] = { function() end, 'desc' } }, { ft = 'minifiles' })),
-}
-print(vim.inspect(foo))
 
 local open_split = function(direction)
   return function()
@@ -157,12 +153,14 @@ local dotfiles = {
   ---@diagnostic disable-next-line:unused-local
   show = function(fs_entry) return true end,
   hide = function(fs_entry) return not vim.startswith(fs_entry.name, '.') end,
-  showing = false,
+  showing = true,
 }
 -- stylua: ignore end
 
 ---@param fs_entry fs_entry
 dotfiles.filter = function(fs_entry) return (dotfiles.showing and dotfiles.show or dotfiles.hide)(fs_entry) end
+
+ToggleHiddenFiles = function() dotfiles.showing = not dotfiles.showing end
 
 ---@param fs_entry fs_entry
 local function get_filters(fs_entry)

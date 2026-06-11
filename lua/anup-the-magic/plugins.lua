@@ -13,17 +13,7 @@ local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
---
---  To check the current status of your plugins, run
---    :Lazy
---
---  You can press `?` in this menu for help. Use `:q` to close the window
---
---  To update plugins you can run
---    :Lazy update
---
--- NOTE: Here is where you install your plugins.
-require('lazy').setup({
+local plugins = {
   { 'NMAC427/guess-indent.nvim', lazy = false, opts = {} }, -- Detect tabstop and shiftwidth automatically
   {
     'OXY2DEV/markview.nvim',
@@ -31,7 +21,7 @@ require('lazy').setup({
     dependencies = { 'saghen/blink.cmp' },
     opts = {
       preview = {
-        -- enable = false,
+        enable = false,
         -- modes = { 'i', 'n', 'no', 'c' },
         -- hybrid_modes = { 'i', 'n' },
 
@@ -47,10 +37,9 @@ require('lazy').setup({
       },
     },
     keys = Utils.process_keybinds {
-      ['<leader>tp'] = { '<cmd>Markview splitToggle<cr>', 'Toggle Markview' },
+      ['<leader>tp'] = { function() vim.cmd 'Markview splitToggle' end, 'Toggle Markview' },
     },
   },
-
   -- TODO: do we want this still
   { 'wesQ3/vim-windowswap', lazy = false, config = function() end },
 
@@ -58,6 +47,7 @@ require('lazy').setup({
   require_safe 'anup-the-magic.plugins.telescope',
   require_safe 'anup-the-magic.plugins.conform',
   require_safe 'anup-the-magic.plugins.mini_files',
+  -- TODO: Also includes outline stuff
   require_safe 'anup-the-magic.plugins.lspconfig',
 
   {
@@ -96,27 +86,6 @@ require('lazy').setup({
     config = function() end,
   },
 
-  -- NOTE: Plugins can also be added by using a table,
-  -- with the first argument being the link and the following
-  -- keys can be used to configure plugin behavior/loading/etc.
-  --
-  -- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
-  --
-
-  -- Alternatively, use `config = function() ... end` for full control over the configuration.
-  -- If you prefer to call `setup` explicitly, use:
-  --    {
-  --        'lewis6991/gitsigns.nvim',
-  --        config = function()
-  --            require('gitsigns').setup({
-  --                -- Your gitsigns configuration here
-  --            })
-  --        end,
-  --    }
-  --
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`.
-  --
   -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -132,14 +101,14 @@ require('lazy').setup({
     },
     keys = Utils.process_keybinds {
       -- stylua: ignore start
-      ['[h'] = {
-        function() require('gitsigns').nav_hunk 'prev' end,
-        'Navigate to previous hunk',
-      },
-      [']h'] = {
-        function() require('gitsigns').nav_hunk 'next' end,
-        'Navigate to next hunk',
-      },
+      -- ['[h'] = {
+      --   function() require('gitsigns').nav_hunk 'prev' end,
+      --   'Navigate to previous hunk',
+      -- },
+      -- [']h'] = {
+      --   function() require('gitsigns').nav_hunk 'next' end,
+      --   'Navigate to next hunk',
+      -- },
       -- Doing this for now
       ['[['] = {
         function() require('gitsigns').nav_hunk 'prev' end,
@@ -187,6 +156,20 @@ require('lazy').setup({
       vim.keymap.set('n', '!l', load_git(), { desc = 'Open all currently modified files in background' })
     end,
   },
+  {
+    'kokusenz/deltaview.nvim',
+    dependencies = { 'kokusenz/delta.lua' },
+    opts = {
+      keyconfig = {
+        next_hunk = ']h',
+        prev_hunk = '[h',
+      },
+    },
+    setup = function(_, opts)
+      local deltaview = require 'deltaview'
+      deltaview.setup(opts)
+      vim.cmd [[cabbrev dm DeltaMenu!]]
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -441,12 +424,17 @@ require('lazy').setup({
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = {
       signs = false,
-      search = { pattern = [[\b(KEYWORDS)(\([^\)]*\))?:]] },
-      highlight = { pattern = [[.*<((KEYWORDS)%(\(.{-1,}\))?):]] },
+      search = { pattern = [[(\b(KEYWORDS)(\([^\)]*\))?:)|(\> ?\[\!(KEYWORDS)] ?)]] },
+      highlight = {
+        pattern = { [[.*<((KEYWORDS)%(\(.{-1,}\))?):]], [[\> \[\!(KEYWORDS)\] ]] },
+        comments_only = false,
+      },
     },
   },
 
-  -- TODO: We're using Mini and Mini.Files
+  -- TODO: We're using Mini.statusline and Mini.files
+  -- Do we also want mini.input? mini.surround?
+  --
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.statusline',
     lazy = false,
@@ -461,132 +449,64 @@ require('lazy').setup({
       statusline.section_location = function() return '%2l:%-2v' end
     end,
   },
-  --[[
+  --
   -- TODO: look into this further
   --       We're using vim-surround and vim-argumentative, which will probably be "good enough" for a while
   --
-  { -- Collection of various small independent plugins/modules
-    'echasnovski/mini.nvim',
+  -- { -- Collection of various small independent plugins/modules
+  --   'echasnovski/mini.nvim',
+  --   config = function()
+  --     -- Better Around/Inside textobjects
+  --     --
+  --     -- Examples:
+  --     --  - va)  - [V]isually select [A]round [)]paren
+  --     --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
+  --     --  - ci'  - [C]hange [I]nside [']quote
+  --     -- require('mini.ai').setup { n_lines = 500 }
+
+  --     -- Add/delete/replace surroundings (brackets, quotes, etc.)
+  --     --
+  --     -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+  --     -- - sd'   - [S]urround [D]elete [']quotes
+  --     -- - sr)'  - [S]urround [R]eplace [)] [']
+  --     -- require('mini.surround').setup()
+
+  --     -- ... and there is more!
+  --     --  Check out: https://github.com/echasnovski/mini.nvim
+  --   end,
+  -- },
+  {
+    'apple/pkl-neovim',
+    lazy = true,
+    ft = 'pkl',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    build = function()
+      require('pkl-neovim').init()
+      vim.cmd 'TSInstall pkl'
+    end,
     config = function()
-      -- Better Around/Inside textobjects
-      --
-      -- Examples:
-      --  - va)  - [V]isually select [A]round [)]paren
-      --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
-      --  - ci'  - [C]hange [I]nside [']quote
-      -- require('mini.ai').setup { n_lines = 500 }
+      local pkl_path = Utils.stdout_lines { 'which', 'pkl' }
+      if pkl_path == {} then
+        vim.notify('pkl binary not found!', vim.log.levels.WARN)
+        return
+      end
 
-      -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
-      -- require('mini.surround').setup()
-
-      -- ... and there is more!
-      --  Check out: https://github.com/echasnovski/mini.nvim
+      -- Configure pkl-lsp
+      vim.g.pkl_neovim = {
+        pkl_cli_path = pkl_path[0],
+      }
     end,
   },
-  --]]
-
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    lazy = false,
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-    opts = {
-      ensure_installed = {
-        'bash',
-        'c',
-        'c_sharp',
-        'diff',
-        'html',
-        'lua',
-        'luadoc',
-        'markdown',
-        'markdown_inline',
-        'query',
-        'vim',
-        'vimdoc',
-      },
-      -- Autoinstall languages that are not installed
-      auto_install = true,
-      highlight = {
-        enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
-      },
-      indent = { enable = true, disable = { 'ruby' } },
-    },
-    config = function(_, opts)
-      local ts_configs = require 'nvim-treesitter.configs'
-      ts_configs.setup(opts)
-
-      local autocmds = require 'anup-the-magic.autocommands'
-
-      vim.api.nvim_create_autocmd('FileType', {
-        pattern = { 'markdown' },
-        group = autocmds.groups.markdown,
-        callback = function()
-          vim.o.foldmethod = 'expr'
-          vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-        end,
-      })
-    end,
-    -- There are additional nvim-treesitter modules that you can use to interact
-    -- with nvim-treesitter. You should go explore a few and see what interests you:
-    --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
+}
 
-  -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
-  -- init.lua. If you want these files, they are in the repository, so you can just download them and
-  -- place them in the correct locations.
-
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
-  --  Here are some example plugins that I've included in the Kickstart repository.
-  --  Uncomment any of the lines below to enable them (you will need to restart nvim).
-  --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    This is the easiest way to modularize your config.
-  --
-  --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
-  --
-  -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
-  -- Or use telescope!
-  -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
-  -- you can continue same window with `<space>sr` which resumes last telescope search
-}, {
+require('lazy').setup(plugins, {
   ui = {
-    -- If you are using a Nerd Font: set icons to an empty table which will use the
-    -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
-    icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
-      lazy = '💤 ',
-    },
+    -- requires nerd font
+    icons = {},
   },
 })

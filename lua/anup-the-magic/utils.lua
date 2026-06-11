@@ -66,6 +66,13 @@ function require_safe(module)
   return ret
 end
 
+-- NOTE: might want to rename this to "require_lazy" or something?
+--- @param module string
+---@diagnostic disable-next-line: lowercase-global
+function require_setup(module)
+  return function() require_safe(module) end
+end
+
 -- Change current dir to git root
 local function cd_git_root()
   local dot_git_path = vim.fn.finddir('.git', '.;')
@@ -123,6 +130,7 @@ return {
   process_keybinds = process_keybinds,
   reload_vim = reload_vim,
   require_safe = require_safe,
+  require_setup = require_setup,
   cd_git_root = cd_git_root,
   stdout_lines = stdout_lines,
 }

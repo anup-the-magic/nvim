@@ -22,6 +22,7 @@ vim.schedule(function()
 
   -- fixes the WSL clipboard
   -- WSL_DISTRO_NAME is a good check for "are we on WSL"
+  -- NOTE: you _might_ be able to remove this with OSC52 support (which is how the rest of my paste is setup)
   if vim.env.WSL_DISTRO_NAME == 'Ubuntu' then
     vim.g.clipboard = {
       name = 'WslClipboard',
