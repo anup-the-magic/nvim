@@ -1,10 +1,13 @@
 -- Autoformat
 
 local tsformatters = { 'prettierd', 'prettier', lsp_fallback = true, lsp_format = 'fallback' }
+local post_save_formatters = {
+  python = { 'black', 'ruff' },
+}
 
 return {
   'stevearc/conform.nvim',
-  event = { 'BufWritePre' },
+  event = { 'BufWritePre', 'BufWritePost' },
   cmd = { 'ConformInfo' },
   keys = {
     {
@@ -51,6 +54,7 @@ return {
     },
     format_on_save = function(bufnr)
       if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then return end
+      if post_save_formatters[vim.bo[bufnr].filetype] then return end
 
       local should_lsp_fallback = {
         c = false,
@@ -63,14 +67,24 @@ return {
         lsp_fallback = not should_lsp_fallback[vim.bo[bufnr].filetype],
       }
     end,
+    format_after_save = function(bufnr)
+      if not post_save_formatters[vim.bo[bufnr].filetype] then return end
+
+      return post_save_formatters[vim.bo[bufnr].filetype]
+    end,
     formatters_by_ft = {
       lua = { 'stylua' },
-      python = { 'black' },
+      c = { 'clang_format' },
+      cpp = { 'clang_format' },
+      cuda = { 'clang_format' },
+      cmake = { 'cmake_format' },
+      css = tsformatters,
+      markdown = tsformatters,
       javascript = tsformatters,
       typescript = tsformatters,
-      css = tsformatters,
-      -- cs = { 'roslyn', 'csharpier', stop_after_first = true },
+      typescriptreact = tsformatters,
       ['*'] = { 'trim_whitespace' },
+      -- cs = { 'roslyn', 'csharpier', stop_after_first = true },
     },
   },
   config = function(_, opts)
