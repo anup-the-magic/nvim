@@ -155,6 +155,38 @@ require('lazy').setup({
       },
       -- stylua: ignore end
     },
+    -- TODO: move to its own file
+    config = function(_, opts)
+      local gitsigns = require 'gitsigns'
+      gitsigns.setup(opts)
+
+      ---@class LoadGitParams
+      ---@field use_branch boolean Use a base branch. Defaults to `false`. If true, uses gitsigns default
+      ---
+      ---@param params LoadGitParams|nil
+      ---@return function
+      local function load_git(params)
+        -- lazily, for keymap callback
+        return function()
+          params = params or {}
+          setmetatable(params, { __index = { use_default_branch = false } })
+
+          Utils.cd_git_root()
+
+          local include_branch = params.use_branch and require('gitsigns.config').config.base or ''
+
+          local diff_files = Utils.stdout_lines { 'git', 'diff', '--name-only', '-M', '--relative', include_branch }
+          local unstaged = Utils.stdout_lines { 'git', 'files' }
+          local files = vim.trim(table.concat(vim.list_extend(diff_files, unstaged), ' '))
+
+          if files ~= '' then vim.cmd.argadd(files) end
+        end
+      end
+
+      vim.keymap.set('n', '!!', load_git { use_branch = true }, { desc = 'Open all modified files in background' })
+      vim.keymap.set('n', '!l', load_git(), { desc = 'Open all currently modified files in background' })
+    end,
+  },
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.

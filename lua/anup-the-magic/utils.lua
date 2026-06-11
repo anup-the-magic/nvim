@@ -3,17 +3,13 @@
 ---@param a T
 ---@return (fun(Xs): R)
 local bind1 = function(self, a)
-  return function(...)
-    return self(a, ...)
-  end
+  return function(...) return self(a, ...) end
 end
 
 local bind = function(self, ...)
   local bound = table.pack(...)
 
-  return function(...)
-    return self(table.unpack(bound), ...)
-  end
+  return function(...) return self(table.unpack(bound), ...) end
 end
 
 local OLD_METATABLE = (debug.getmetatable(function() end) or {})
@@ -44,9 +40,7 @@ local function process_keybinds(keybinds, opts)
   for keybind, command in pairs(keybinds) do
     ---@type string?
     local desc
-    if vim.is_callable(command) then
-      command = { command, nil }
-    end
+    if vim.is_callable(command) then command = { command, nil } end
 
     command, desc = unpack(command)
     ret[i + 1] = { keybind, command, desc, unpack(opts or {}) }
@@ -57,11 +51,10 @@ local function process_keybinds(keybinds, opts)
 end
 
 local function reload_vim()
+  -- TBD how to do this, but 0.12 has a "reload" now
   -- return vim.system({ 'kill', "-USR1 $(ps -p '" .. vim.fn.getpid() .. "' -o ppid=)" }):wait()
 end
 
---- Creates an F-string, replacing `$variable_name` with the variable name and executing functions
---- within ${function}
 --- @param module string
 ---@diagnostic disable-next-line: lowercase-global
 function require_safe(module)
@@ -73,11 +66,23 @@ function require_safe(module)
   return ret
 end
 
+-- Change current dir to git root
+local function cd_git_root()
+  local dot_git_path = vim.fn.finddir('.git', '.;')
+  local git_root = vim.fn.fnamemodify(dot_git_path, ':h')
+  vim.api.nvim_set_current_dir(git_root)
+end
+
+---@param cmd string[]
+---@return string[]
+local function stdout_lines(cmd)
+  local stdout = vim.system(cmd, { text = true }):wait().stdout or ''
+  return vim.split(stdout, '\n')
+end
+
 local function f_variable(orig)
   local str = orig
-  str = string.gsub(str, '$(%w+)', function(n)
-    return _G[n]
-  end)
+  str = string.gsub(str, '$(%w+)', function(n) return _G[n] end)
   return str
 end
 
@@ -118,4 +123,6 @@ return {
   process_keybinds = process_keybinds,
   reload_vim = reload_vim,
   require_safe = require_safe,
+  cd_git_root = cd_git_root,
+  stdout_lines = stdout_lines,
 }
