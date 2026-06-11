@@ -14,25 +14,19 @@ local groups = {
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = groups.highlight_yank,
-  callback = function()
-    vim.hl.on_yank()
-  end,
+  callback = function() vim.hl.on_yank() end,
 })
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'help', 'help.vim' },
   group = groups.help,
-  callback = function()
-    vim.cmd 'wincmd L'
-  end,
+  callback = function() vim.cmd 'wincmd L' end,
 })
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'markdown' },
   group = groups.markdown,
-  callback = function()
-    vim.o.wrap = false
-  end,
+  callback = function() vim.o.wrap = false end,
 })
 
 return {
