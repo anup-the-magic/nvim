@@ -6,15 +6,11 @@
 -- Make line numbers default
 vim.o.number = true
 vim.o.ruler = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
--- TODO: do I want to do this
 vim.o.showmode = false
 
 -- Sync clipboard between OS and Neovim.
@@ -112,3 +108,15 @@ vim.o.confirm = true
 -- [[ Folding ]]
 vim.o.foldlevelstart = 10
 vim.o.foldcolumn = 'auto:9'
+
+-- [[ Autoread ]]
+vim.o.autoread = true
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter' }, {
+  group = require('anup-the-magic.autocommands').groups.lua,
+  callback = function(event)
+    local opts = vim.bo[event.buf]
+    if opts.modified or opts.buftype ~= '' or event.file == '' then return end
+
+    vim.cmd('checktime ' .. event.buf)
+  end,
+})
