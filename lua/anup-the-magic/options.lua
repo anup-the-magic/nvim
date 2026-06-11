@@ -120,3 +120,7 @@ vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter' }, {
     vim.cmd('checktime ' .. event.buf)
   end,
 })
+
+-- [[ Directory-specific config! ]]
+-- see `:help exrc`
+vim.o.exrc = true
